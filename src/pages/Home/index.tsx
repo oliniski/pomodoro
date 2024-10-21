@@ -3,6 +3,7 @@ import { CountdownContainer, FormContainer, HomeContainer, MinutesAmountInput, S
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
+import { useState } from "react";
 
 const newCycleFormValidationSchema = zod.object({
   task: zod.string().min(1, 'Informe a tarefa'),
@@ -12,13 +13,19 @@ const newCycleFormValidationSchema = zod.object({
     .max(60, 'O ciclo precisa ser de no máximo 60 minutos.'),
 })
 
-interface NewCycleFormData {
+type NewCycleFormData = zod.infer<typeof newCycleFormValidationSchema>
+
+interface Cycle {
+  id: string;
   task: string;
   minutesAmount: number;
 }
 
 export function Home() {
-  const { register, handleSubmit, watch } = useForm<NewCycleFormData>({
+  const [cycles, setCycles] = useState<Cycle[]>([]);
+  const [activeCycleId, setActiveCycleId] = useState<string | null>(null);
+
+  const { register, handleSubmit, watch, reset } = useForm<NewCycleFormData>({
     resolver: zodResolver(newCycleFormValidationSchema),
     defaultValues: {
       task: '',
@@ -27,10 +34,19 @@ export function Home() {
   });
 
   function handleCreateNewCycle(data: NewCycleFormData) {
-    // Implement your logic to create a new cycle here
-    console.log(data);
-    // Reset form values
+    const id = String(new Date().getTime()),
+    const newCycle: Cycle = {
+      id,
+      task: data.task,
+      minutesAmount: data.minutesAmount,
+    };
 
+    // Closure -> always use function when the new state value depends on the previous values
+    setCycles((state) => [...state, newCycle]);
+    
+    // Change the active cycle
+    setActiveCycleId(id);
+    reset();
   }
 
   const task = watch('task')
