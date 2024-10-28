@@ -14,7 +14,6 @@ const newCycleFormValidationSchema = zod.object({
 })
 
 type NewCycleFormData = zod.infer<typeof newCycleFormValidationSchema>
-<<<<<<< HEAD
 
 interface Cycle {
   id: string;
@@ -26,10 +25,6 @@ export function Home() {
   const [cycles, setCycles] = useState<Cycle[]>([]);
   const [activeCycleId, setActiveCycleId] = useState<string | null>(null);
 
-=======
-
-export function Home() {
->>>>>>> 6314d1d10d03e4f6e87f3c5752de40dc634d7e47
   const { register, handleSubmit, watch, reset } = useForm<NewCycleFormData>({
     resolver: zodResolver(newCycleFormValidationSchema),
     defaultValues: {
@@ -39,8 +34,7 @@ export function Home() {
   });
 
   function handleCreateNewCycle(data: NewCycleFormData) {
-<<<<<<< HEAD
-    const id = String(new Date().getTime()),
+    const id = String(new Date().getTime());
     const newCycle: Cycle = {
       id,
       task: data.task,
@@ -52,12 +46,12 @@ export function Home() {
     
     // Change the active cycle
     setActiveCycleId(id);
-=======
-    // Implement your logic to create a new cycle here
-    console.log(data);
->>>>>>> 6314d1d10d03e4f6e87f3c5752de40dc634d7e47
     reset();
   }
+
+  const activeCycle = cycles.find(cycle => cycle.id === activeCycleId);
+
+  console.log(activeCycle);
 
   const task = watch('task')
   const isSubmitDisabled = !task
